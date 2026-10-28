@@ -1,0 +1,291 @@
+/* SAI AI Property Walkthrough Cinematic Engine Styles */
+
+.sai-walkthrough-viewport {
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  background-color: #0b1528;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
+}
+
+/* Cinematic Vignette */
+.sai-walkthrough-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: radial-gradient(circle at center, rgba(11, 21, 40, 0.05) 0%, rgba(11, 21, 40, 0.4) 65%, rgba(11, 21, 40, 0.85) 100%);
+}
+
+.sai-walkthrough-gradient-bottom {
+  position: absolute;
+  inset-x: 0;
+  bottom: 0;
+  height: 60%;
+  pointer-events: none;
+  z-index: 10;
+  background: linear-gradient(to top, rgba(11, 21, 40, 0.95) 0%, rgba(11, 21, 40, 0.55) 45%, transparent 100%);
+}
+
+.sai-walkthrough-gradient-top {
+  position: absolute;
+  inset-x: 0;
+  top: 0;
+  height: 35%;
+  pointer-events: none;
+  z-index: 10;
+  background: linear-gradient(to bottom, rgba(11, 21, 40, 0.85) 0%, rgba(11, 21, 40, 0.35) 60%, transparent 100%);
+}
+
+/* Ken Burns Camera Animations with Opacity Fade & Slow Zoom */
+.sai-cinematic-zoom-pan1 {
+  animation: saiCinematicAnim1 6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.sai-cinematic-zoom-pan2 {
+  animation: saiCinematicAnim2 6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.sai-cinematic-static {
+  animation: saiSimpleFade 0.4s ease-out forwards;
+}
+
+@keyframes saiCinematicAnim1 {
+  0% {
+    opacity: 0;
+    transform: scale(1.05) translate(0, 0);
+  }
+  15% {
+    opacity: 1;
+    transform: scale(1.03) translate(0, 0);
+  }
+  85% {
+    opacity: 1;
+    transform: scale(1.08) translate(-1%, -0.5%);
+  }
+  100% {
+    opacity: 0.9;
+    transform: scale(1.09) translate(-1.5%, -0.8%);
+  }
+}
+
+@keyframes saiCinematicAnim2 {
+  0% {
+    opacity: 0;
+    transform: scale(1.08) translate(1%, 0);
+  }
+  15% {
+    opacity: 1;
+    transform: scale(1.05) translate(0.5%, 0);
+  }
+  85% {
+    opacity: 1;
+    transform: scale(1.01) translate(-0.5%, 0.5%);
+  }
+  100% {
+    opacity: 0.9;
+    transform: scale(1.0) translate(-1%, 0.8%);
+  }
+}
+
+@keyframes saiSimpleFade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Glassmorphism Cards */
+.sai-walkthrough-glass {
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+}
+
+.sai-walkthrough-glass-light {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+/* Micro Animations */
+.sai-animate-slide-up {
+  animation: saiSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.sai-animate-scale-in {
+  animation: saiScaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes saiSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes saiScaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Architectural Fallback Blueprint Pattern */
+.sai-blueprint-pattern {
+  background-color: #0b1528;
+  background-image:
+    linear-gradient(rgba(0, 143, 140, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 143, 140, 0.15) 1px, transparent 1px),
+    linear-gradient(rgba(0, 143, 140, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 143, 140, 0.08) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px, 10px 10px, 10px 10px;
+  background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+}
+
+/* Room-Specific Cinematic Camera Animations */
+.sai-camera-zoom-building {
+  animation: saiZoomBuilding 6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.sai-camera-zoom-forward {
+  animation: saiZoomForward 5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.sai-camera-pan-lr {
+  animation: saiPanLR 6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.sai-camera-zoom-kitchen {
+  animation: saiZoomKitchen 6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.sai-camera-pan-horizontal {
+  animation: saiPanHorizontal 6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.sai-camera-drift {
+  animation: saiDrift 6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.sai-camera-push {
+  animation: saiPush 5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.sai-camera-pan-up {
+  animation: saiPanUp 5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes saiZoomBuilding {
+  0% {
+    transform: scale(1.02) translate(0, 1%);
+  }
+  100% {
+    transform: scale(1.12) translate(0, -1%);
+  }
+}
+
+@keyframes saiZoomForward {
+  0% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1.14);
+  }
+}
+
+@keyframes saiPanLR {
+  0% {
+    transform: scale(1.08) translate(-3%, 0);
+  }
+  100% {
+    transform: scale(1.08) translate(3%, 0);
+  }
+}
+
+@keyframes saiZoomKitchen {
+  0% {
+    transform: scale(1.03) translate(-1%, 1%);
+  }
+  100% {
+    transform: scale(1.11) translate(1%, -1%);
+  }
+}
+
+@keyframes saiPanHorizontal {
+  0% {
+    transform: scale(1.07) translate(2.5%, 0);
+  }
+  100% {
+    transform: scale(1.07) translate(-2.5%, 0);
+  }
+}
+
+@keyframes saiDrift {
+  0% {
+    transform: scale(1.05) translate(1%, 1%);
+  }
+  100% {
+    transform: scale(1.09) translate(-1%, -1%);
+  }
+}
+
+@keyframes saiPush {
+  0% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes saiPanUp {
+  0% {
+    transform: scale(1.06) translate(0, 2%);
+  }
+  100% {
+    transform: scale(1.06) translate(0, -2%);
+  }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .sai-cinematic-zoom-pan1,
+  .sai-cinematic-zoom-pan2,
+  .sai-camera-zoom-building,
+  .sai-camera-zoom-forward,
+  .sai-camera-pan-lr,
+  .sai-camera-zoom-kitchen,
+  .sai-camera-pan-horizontal,
+  .sai-camera-drift,
+  .sai-camera-push,
+  .sai-camera-pan-up {
+    animation: saiSimpleFade 0.3s ease-out forwards !important;
+    transform: none !important;
+  }
+
+  .sai-animate-slide-up,
+  .sai-animate-scale-in {
+    animation: saiSimpleFade 0.2s ease-out forwards !important;
+    transform: none !important;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+

@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+venv/
+.env
+backend/.env
+server/node_modules/
+
+# Python cache & artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Linting
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build & Vite artifacts
+dist/
+build/
+.vite/
+*.local
+
+# Database & SQLite files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+
+# Temporary & intermediate files
+temp_*
+*.tmp
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Storage / Uploads
+uploads/*
+!uploads/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/sai.db

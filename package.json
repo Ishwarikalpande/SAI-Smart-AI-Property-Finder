@@ -1,0 +1,16 @@
+{
+  "name": "smart-ai-property-finder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Smart AI Property Finder with Super Admin Control Console",
+  "scripts": {
+    "dev": "npm --prefix SAI-Figma-Test run dev",
+    "app": "npm --prefix SAI-Figma-Test run dev",
+    "build": "npm --prefix SAI-Figma-Test run build",
+    "admin": "npm --prefix super-admin/frontend run dev",
+    "start:admin": "npm --prefix super-admin/frontend run dev",
+    "build:admin": "npm --prefix super-admin/frontend run build",
+    "backend": "backend\\venv\\Scripts\\python backend\\main.py",
+    "admin:backend": "backend\\venv\\Scripts\\python super-admin\\backend\\main.py"
+  }
+}

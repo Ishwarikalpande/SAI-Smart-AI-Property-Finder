@@ -1,0 +1,413 @@
+CLEAN UP THE EXISTING SAI SMART AI PROPERTY FINDER APPLICATION BY SEPARATING THE THREE USER ROLES CORRECTLY:
+
+1. BUYER / PROPERTY SEEKER
+2. AGENT / BROKER
+3. BUILDER — THE PERSON OR COMPANY THAT CONSTRUCTS APARTMENT BUILDINGS AND SELLS THE APARTMENTS/UNITS
+
+IMPORTANT:
+The current design has role contamination. Some users can see dashboards and features that belong to other roles.
+
+Fix the existing design architecture so that each role has its own separate experience.
+
+Do not redesign the entire application.
+Do not change the existing SAI branding, colors, typography, layout style, or visual design system unnecessarily.
+Do not create a Super Admin dashboard in this task.
+Do not add new unrelated features.
+
+The primary goal is to separate the Buyer, Agent, and Builder experiences and remove features from the wrong role.
+
+==================================================
+1. BUYER / PROPERTY SEEKER
+==================================================
+
+The Buyer is a person searching for a property to buy or rent.
+
+The Buyer can:
+
+- Browse available properties
+- Search for properties
+- Use AI-powered natural-language property search
+- Use voice search
+- Apply filters
+- View property details
+- View property locations on a map
+- Save or favorite properties
+- Compare properties
+- View personalized property recommendations
+- Contact the owner, agent, or builder
+- Send enquiries
+- View messages and conversations
+- View saved properties
+- View search history
+- Manage their own profile and preferences
+
+The Buyer must NOT be able to:
+
+- Create a property listing
+- Generate a property listing
+- Add a new property
+- Manage property listings
+- Manage apartment projects
+- Manage towers or buildings
+- Manage apartment units or inventory
+- Manage clients as an Agent
+- Access the Agent Dashboard
+- Access the Builder Dashboard
+- Access any platform administration features
+
+The Buyer navigation should contain only Buyer-related features:
+
+- Home
+- AI Search
+- Explore Properties
+- Map
+- Saved Properties
+- Compare
+- Messages / Enquiries
+- Profile
+
+Remove the following from the Buyer experience if they currently appear:
+
+- Add Property
+- Create Listing
+- Generate Listing
+- Manage Listings
+- Add Project
+- My Projects
+- Units / Inventory
+- Agent Dashboard
+- Builder Dashboard
+- Admin Dashboard
+
+A Buyer should be able to VIEW and ENQUIRE about properties, but should not be able to CREATE or MANAGE property listings.
+
+==================================================
+2. AGENT / BROKER
+==================================================
+
+The Agent is a real-estate professional or broker who represents properties and helps buyers find and purchase or rent them.
+
+The Agent can:
+
+- Access an Agent Dashboard
+- Create property listings
+- Add individual property listings
+- Edit their own listings
+- Manage their own listings
+- Upload property images
+- Add property details
+- Upload documents for verification
+- Submit properties for verification
+- View verification status
+- Manage buyer enquiries
+- Manage leads
+- Manage their own clients
+- Communicate with interested buyers
+- View analytics for their own listings
+- Manage their professional Agent profile
+
+The Agent should manage only:
+
+- Their own listings
+- Listings assigned to them
+- Their own leads
+- Their own clients
+- Their own performance analytics
+
+The Agent must NOT be able to:
+
+- Access the Builder Dashboard
+- Create or manage apartment construction projects as a Builder
+- Manage towers or buildings belonging to a Builder
+- Manage apartment inventory belonging to a Builder
+- Manage all users on the platform
+- Manage all properties on the platform
+- Access platform-wide administration features
+- Access the Super Admin Control Panel
+
+The Agent navigation should contain only:
+
+- Agent Overview
+- My Listings
+- Add Property
+- Leads & Enquiries
+- Clients
+- Analytics
+- Verification Status
+- Messages
+- Agent Profile
+
+IMPORTANT:
+Use the term "My Listings" for properties managed by the Agent.
+
+Do not show the Agent all properties on the SAI platform as if the Agent manages the entire property database.
+
+==================================================
+3. BUILDER
+==================================================
+
+The Builder is the person or company that constructs apartment buildings or residential housing projects and sells the apartments or units within those projects.
+
+The Builder is NOT a Buyer.
+
+The Builder is NOT an Agent.
+
+The Builder is responsible for their own constructed apartment projects.
+
+For example:
+
+A Builder creates:
+
+GREEN VALLEY APARTMENTS
+        ↓
+    TOWER A
+        ↓
+    APARTMENT UNITS
+        ↓
+    Flat 101
+    Flat 102
+    Flat 103
+
+The Builder can:
+
+- Access a Builder Dashboard
+- Create their own apartment project
+- Add apartment project details
+- Add project images
+- Add project descriptions
+- Add towers or buildings
+- Add apartments or units
+- Manage available apartments
+- Manage booked apartments
+- Manage sold apartments
+- Add apartment prices
+- Upload project and legal documents
+- Submit projects for verification
+- View verification status
+- Receive buyer enquiries
+- Manage enquiries related to their own projects
+- View analytics for their own projects
+- Manage their Builder profile
+
+The Builder should be able to manage the following hierarchy:
+
+BUILDER
+↓
+APARTMENT PROJECT
+↓
+TOWERS / BUILDINGS
+↓
+APARTMENTS / UNITS
+↓
+AVAILABILITY AND STATUS
+
+Example statuses:
+
+- Available
+- Reserved
+- Booked
+- Sold
+
+The Builder must NOT be able to:
+
+- Access the Agent Dashboard
+- Manage Agent clients
+- Manage Agent leads
+- Manage unrelated Agent listings
+- Manage all properties on the SAI platform
+- Manage all users on the platform
+- Access platform-wide administration
+- Access the Super Admin Control Panel
+
+The Builder navigation should contain only:
+
+- Builder Overview
+- My Apartment Projects
+- My Properties / Units
+- Add Apartment Project
+- Towers / Buildings
+- Availability & Inventory
+- Buyer Enquiries
+- Analytics
+- Verification & Documents
+- Messages
+- Builder Profile
+
+==================================================
+CRITICAL DIFFERENCE BETWEEN AGENT AND BUILDER
+==================================================
+
+AGENT:
+
+The Agent generally manages individual property listings on behalf of owners or sellers.
+
+Example:
+
+"2BHK Apartment for Sale in Pune"
+
+The Agent manages the listing, buyer enquiries, and clients.
+
+BUILDER:
+
+The Builder constructs an apartment project and manages multiple apartments or units within that project.
+
+Example:
+
+"Green Valley Apartments"
+
+↓ Tower A
+
+↓ Flat 101
+
+↓ Flat 102
+
+↓ Flat 103
+
+Do not combine these two experiences.
+
+An Agent should not see Builder project management.
+
+A Builder should not see Agent client-management tools.
+
+==================================================
+ROLE SEPARATION RULES
+==================================================
+
+BUYER:
+
+Can search, view, save, compare, and enquire about properties.
+
+Cannot create or manage listings.
+
+AGENT:
+
+Can create and manage their own individual property listings, leads, and clients.
+
+Cannot manage apartment construction projects.
+
+BUILDER:
+
+Can create and manage their own apartment construction projects, buildings, towers, apartments, units, and availability.
+
+Cannot manage Agent clients or Agent-specific tools.
+
+==================================================
+FIX THE EXISTING UI
+==================================================
+
+Review the existing SAI screens, dashboards, navigation menus, buttons, cards, and actions.
+
+Move each feature to the correct role.
+
+If a Buyer currently sees:
+
+- Add Property
+- Create Listing
+- Generate Listing
+- Manage Listings
+- Add Project
+- My Projects
+- Towers
+- Units / Inventory
+
+Remove these features from the Buyer experience.
+
+If an Agent currently sees:
+
+- Apartment Project Management
+- Towers / Buildings
+- Apartment Unit Inventory
+- Builder Project Management
+
+Remove these features from the Agent experience.
+
+If a Builder currently sees:
+
+- Agent Client Management
+- Agent-specific Lead Management
+- Generic Agent Listing Management
+
+Remove these features from the Builder experience.
+
+If a role-specific dashboard currently contains features from another role, remove those features and keep only the appropriate role-specific tools.
+
+==================================================
+NAVIGATION SEPARATION
+==================================================
+
+Create three separate navigation systems.
+
+BUYER NAVIGATION:
+
+Home
+AI Search
+Explore Properties
+Map
+Saved Properties
+Compare
+Messages / Enquiries
+Profile
+
+AGENT NAVIGATION:
+
+Agent Overview
+My Listings
+Add Property
+Leads & Enquiries
+Clients
+Analytics
+Verification Status
+Messages
+Agent Profile
+
+BUILDER NAVIGATION:
+
+Builder Overview
+My Apartment Projects
+My Properties / Units
+Add Apartment Project
+Towers / Buildings
+Availability & Inventory
+Buyer Enquiries
+Analytics
+Verification & Documents
+Messages
+Builder Profile
+
+Do not combine these navigation systems into one universal dashboard.
+
+Each role should see only its own navigation.
+
+==================================================
+ROLE-BASED USER FLOW
+==================================================
+
+The application should conceptually follow this structure:
+
+USER AUTHENTICATION
+        ↓
+ROLE IDENTIFICATION
+        ↓
+        ├── BUYER → BUYER APPLICATION
+        │
+        ├── AGENT → AGENT PORTAL
+        │
+        └── BUILDER → BUILDER PORTAL
+
+A Buyer must not be redirected to the Agent Portal.
+
+A Buyer must not be redirected to the Builder Portal.
+
+An Agent must not be redirected to the Builder Portal.
+
+A Builder must not be redirected to the Agent Portal.
+
+Keep the three role experiences visually consistent with the SAI brand but functionally separate.
+
+The final result should clearly distinguish:
+
+1. Buyer / Property Seeker
+2. Agent / Broker
+3. Builder who constructs apartment projects and sells individual apartments or units
+
+The main objective is to remove role contamination from the existing SAI application without unnecessarily redesigning the entire visual interface.

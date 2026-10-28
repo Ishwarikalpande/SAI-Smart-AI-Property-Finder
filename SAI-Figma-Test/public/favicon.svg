@@ -1,0 +1,24 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="saiFaviconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#00A8A3" />
+      <stop offset="50%" stopColor="#008F8C" />
+      <stop offset="100%" stopColor="#004F4D" />
+    </linearGradient>
+    <linearGradient id="saiNeural" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#67E8F9" />
+      <stop offset="100%" stopColor="#2DD4BF" />
+    </linearGradient>
+    <linearGradient id="saiRoof" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#FFFFFF" />
+      <stop offset="100%" stopColor="#E6F4F2" />
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="44" height="44" rx="13" fill="url(#saiFaviconGrad)" />
+  <rect x="2.75" y="2.75" width="42.5" height="42.5" rx="12.25" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" fill="none" />
+  <path d="M24 10.5L12 21.5H16.5V34.5C16.5 35.6 17.4 36.5 18.5 36.5H29.5C30.6 36.5 31.5 35.6 31.5 34.5V21.5H36L24 10.5Z" fill="url(#saiRoof)" opacity="0.96" />
+  <path d="M21 27.5C21 25.84 22.34 24.5 24 24.5C25.66 24.5 27 25.84 27 27.5C27 28.8 26.18 29.9 25 30.3V34.5C25 35.05 24.55 35.5 24 35.5C23.45 35.5 23 35.05 23 34.5V30.3C21.82 29.9 21 28.8 21 27.5Z" fill="#006D6A" />
+  <circle cx="24" cy="16.5" r="2.2" fill="url(#saiNeural)" />
+  <circle cx="17.5" cy="22" r="1.5" fill="url(#saiNeural)" />
+  <circle cx="30.5" cy="22" r="1.5" fill="url(#saiNeural)" />
+</svg>

@@ -1,0 +1,80 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* ── Google Translate Seamless Integration Styles ── */
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMy,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMy-KoT1jd,
+iframe.goog-te-banner-frame,
+.VIpgJd-ZVi9od-ORHb-OEVmcd {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+}
+
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.notranslate {
+  translate: no;
+}
+
+/* ── Feature 2: Dual-Direction Infinite Vertical Property Marquee ── */
+@keyframes saiScrollUp {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+@keyframes saiScrollDown {
+  0% {
+    transform: translate3d(0, -50%, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.sai-marquee-col-up {
+  animation: saiScrollUp 50s linear infinite;
+  will-change: transform;
+}
+
+.sai-marquee-col-down {
+  animation: saiScrollDown 50s linear infinite;
+  will-change: transform;
+}
+
+.sai-marquee-col-up:hover,
+.sai-marquee-col-down:hover,
+.sai-marquee-paused {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sai-marquee-col-up,
+  .sai-marquee-col-down {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
