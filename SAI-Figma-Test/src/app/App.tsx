@@ -3834,14 +3834,6 @@ function PropertyPage({ navigate, propertyId, openBuilding3D }: { navigate: (pg:
                   </button>
 
                   <button
-                    onClick={() => setWalkthroughOpen(true)}
-                    className="mt-2 w-full py-2 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center justify-center gap-1.5 border border-white/20 backdrop-blur-md active:scale-95 transition-all cursor-pointer"
-                  >
-                    <Film size={13} className="text-teal-300" />
-                    🎥 View Walkthrough
-                  </button>
-
-                  <button
                     onClick={() => {
                       if (openBuilding3D) {
                         openBuilding3D(p.tower_id || p.building_id || 10);
