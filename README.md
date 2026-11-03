@@ -4,6 +4,51 @@
 
 ---
 
+## 📸 Visual Showcase & Screenshots
+
+<div align="center">
+  <h3>🏠 AI-Powered Discovery & Live Property Streams</h3>
+  <img src="screenshots/02-home-landing.png" alt="SAI Home Page" width="90%" />
+  <p><em>Conversational property search supporting voice and text in 8 Indian languages with dual live property streams.</em></p>
+</div>
+
+<br />
+
+<div align="center">
+  <h3>🗺️ Interactive Geospatial Map & Voice Finder</h3>
+  <img src="screenshots/03-interactive-map.jpg" alt="Interactive Property Map" width="90%" />
+  <p><em>Leaflet & OpenStreetMap geospatial integration with GPS targeting, verified property clusters, and voice queries.</em></p>
+</div>
+
+<br />
+
+<div align="center">
+  <h3>🛋️ 3D Virtual Walkthrough & Furnished Flat Tour</h3>
+  <img src="screenshots/04-3d-virtual-tour.png" alt="3D Virtual Tour" width="90%" />
+  <p><em>Interactive 360° room-by-room walkthrough with live navigation hotspots and detailed room specifications.</em></p>
+</div>
+
+<br />
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center" width="50%">
+        <h4>🌐 Multilingual Onboarding (8 Languages)</h4>
+        <img src="screenshots/01-language-selection.png" alt="Language Selection" width="100%" />
+        <p><em>Instant language switching across English, Hindi, Marathi, Gujarati, Tamil, Telugu, Kannada, and Bengali.</em></p>
+      </td>
+      <td align="center" width="50%">
+        <h4>🔐 Role-Based Authentication</h4>
+        <img src="screenshots/05-role-login.png" alt="Role Selection Login" width="100%" />
+        <p><em>Tailored authentication & workspaces for Buyers, Sellers, Agents, and Builders.</em></p>
+      </td>
+    </tr>
+  </table>
+</div>
+
+---
+
 ## 🌟 Key Features
 
 ### 1. 🤖 Conversational AI Assistant (Qwen3 Grounded Engine)
@@ -61,6 +106,7 @@ SAI-Figma-Test/
 │   │   └── pages/                 # Pages (HomePage, SearchPage, AdminDash, BuyerDash, etc.)
 │   └── package.json
 ├── docker-compose.yml             # Containerized deployment config
+├── screenshots/                   # Application screenshots & visual showcase
 └── README.md
 ```
 

@@ -1244,14 +1244,6 @@ function TopNav({ page, navigate, goBack, city, setCity, locality, setLocality, 
                     <span>Exit Guest</span>
                   </button>
                 )}
-                <button
-                  onClick={() => navigate("admin-login")}
-                  title="Super Admin Portal Login"
-                  className="p-2 rounded-xl border border-[#D9E5E3] text-slate-500 hover:text-[#006D6A] hover:border-[#008F8C] hover:bg-[#E6F4F2] transition-colors flex items-center gap-1 text-xs font-bold"
-                >
-                  <Shield size={14} className="text-[#008F8C]" />
-                  <span className="hidden xl:inline">Super Admin</span>
-                </button>
                 <button onClick={() => navigate("login")} className="px-4 py-2 rounded-xl border-2 border-[#D9E5E3] text-[#008F8C] font-semibold text-sm hover:bg-[#E6F4F2] transition-colors">{tr.login}</button>
                 <button onClick={() => navigate("signup")} className="px-4 py-2 rounded-xl bg-[#006D6A] text-white font-semibold text-sm hover:bg-[#004F4D] shadow-[0_4px_12px_rgba(0,109,106,0.4)] hover:shadow-[0_6px_20px_rgba(0,109,106,0.5)] transition-all">{tr.signUp}</button>
               </div>
@@ -1293,15 +1285,6 @@ function TopNav({ page, navigate, goBack, city, setCity, locality, setLocality, 
               </>
             )}
           </div>
-          {!isLoggedIn && !isGuest && (
-            <button
-              onClick={() => { navigate("admin-login"); setMobileOpen(false); }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:text-[#006D6A] hover:bg-slate-50 transition-colors mt-2"
-            >
-              <Shield size={14} className="text-[#008F8C]" />
-              <span>Super Admin Console Login</span>
-            </button>
-          )}
           <div className="flex gap-3 pt-1">
             <div className="flex-1">
               <p className="text-xs text-slate-400 mb-1.5 font-medium">City</p>
@@ -1348,7 +1331,7 @@ function Footer({ navigate }: { navigate: (pg: Page) => void }) {
           {[
             { title: "Explore", links: [{ l: "Buy Property", p: "search" as Page }, { l: "Rent Property", p: "search" as Page }, { l: "Commercial", p: "search" as Page }, { l: "New Projects", p: "search" as Page }, { l: "Builders", p: "builder" as Page }] },
             { title: "AI Tools", links: [{ l: "SAI Assistant", p: "chat" as Page }, { l: "Property Compare", p: "compare" as Page }, { l: "Fraud Detection", p: "fraud" as Page }, { l: "Price Prediction", p: "search" as Page }, { l: "Senior Mode", p: "senior" as Page }] },
-            { title: "Company", links: [{ l: "About SAI", p: "home" as Page }, { l: "Careers", p: "home" as Page }, { l: "Super Admin Portal", p: "admin-login" as Page }, { l: "Privacy Policy", p: "home" as Page }, { l: "Terms", p: "home" as Page }, { l: "Contact", p: "home" as Page }] },
+            { title: "Company", links: [{ l: "About SAI", p: "home" as Page }, { l: "Careers", p: "home" as Page }, { l: "Privacy Policy", p: "home" as Page }, { l: "Terms", p: "home" as Page }, { l: "Contact", p: "home" as Page }] },
           ].map(col => (
             <div key={col.title}>
               <h4 className="font-black text-white text-sm mb-5">{col.title}</h4>
@@ -5143,7 +5126,6 @@ const LOGIN_ROLES = [
   { id: "seller" as UserRole, label: "Seller", email: "owner@sai.in", icon: DollarSign, badge: "Property Owner", desc: "Manage listings & buyer leads" },
   { id: "agent" as UserRole, label: "Agent", email: "agent@sai.in", icon: Users, badge: "Real Estate Broker", desc: "Manage client leads & scheduled visits" },
   { id: "builder" as UserRole, label: "Builder", email: "builder@sai.in", icon: Building, badge: "Developer", desc: "Projects, towers, units & enquiries" },
-  { id: "admin" as UserRole, label: "Super Admin", email: "admin@sai.in", icon: Shield, badge: "Administrator", desc: "Platform telemetry, verification, users & logs" },
 ];
 
 function LoginPage({
@@ -5157,7 +5139,10 @@ function LoginPage({
   setPendingRole?: (r: UserRole) => void;
   onUserLogin?: (name: string, email: string) => void;
 }) {
-  const [selectedRole, setSelectedRole] = useState<UserRole>(pendingRole || "buyer");
+  const isSuperAdminRole = pendingRole === "admin" || pendingRole === "super_admin";
+  const [selectedRole, setSelectedRole] = useState<UserRole>(
+    !isSuperAdminRole && pendingRole ? pendingRole : "buyer"
+  );
 
   const getRoleEmail = (role: UserRole) => {
     if (role === "seller") return "owner@sai.in";
@@ -5167,7 +5152,7 @@ function LoginPage({
     return "buyer@sai.in";
   };
 
-  const [loginEmail, setLoginEmail] = useState(getRoleEmail(pendingRole || "buyer"));
+  const [loginEmail, setLoginEmail] = useState(getRoleEmail(!isSuperAdminRole && pendingRole ? pendingRole : "buyer"));
   const [loginPassword, setLoginPassword] = useState("Password123!");
   const [loading, setLoading] = useState(false);
   const [activeOAuthProvider, setActiveOAuthProvider] = useState<"google" | "apple" | null>(null);
@@ -5185,7 +5170,7 @@ function LoginPage({
   const [oauthLinkToken, setOauthLinkToken] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (pendingRole) {
+    if (pendingRole && pendingRole !== "admin" && pendingRole !== "super_admin") {
       setSelectedRole(pendingRole);
       setLoginEmail(getRoleEmail(pendingRole));
       setLoginPassword("Password123!");
@@ -5377,7 +5362,7 @@ function LoginPage({
             <p className="text-slate-500 text-sm mt-1">Sign in to your SAI account</p>
           </div>
 
-          {/* 5 Role Selector Tabs */}
+          {/* 4 Role Selector Tabs */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
@@ -5387,7 +5372,7 @@ function LoginPage({
                 {currentRoleObj.badge}
               </span>
             </div>
-            <div className="grid grid-cols-5 gap-1 p-1 bg-slate-100 rounded-2xl">
+            <div className="grid grid-cols-4 gap-1.5 p-1 bg-slate-100 rounded-2xl">
               {LOGIN_ROLES.map(r => {
                 const isSel = selectedRole === r.id;
                 const Icon = r.icon;
@@ -5521,17 +5506,6 @@ function LoginPage({
             </button>
           </div>
           <p className="text-center text-slate-500 text-sm">New to SAI? <button onClick={() => { if (setPendingRole) setPendingRole(selectedRole); navigate("signup"); }} className="text-[#006D6A] font-bold hover:underline">Create Account</button></p>
-          <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-medium">Platform Administrator?</span>
-            <button
-              type="button"
-              onClick={() => navigate("admin-login")}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#006D6A] hover:text-[#004F4D] bg-[#E6F4F2] hover:bg-[#D9E5E3] px-3 py-1.5 rounded-xl border border-[#006D6A]/20 transition-all"
-            >
-              <Shield size={13} />
-              <span>Super Admin Login</span>
-            </button>
-          </div>
           <button onClick={() => { navigate("home"); }} className="mt-3 w-full text-slate-400 text-sm text-center hover:text-[#006D6A] transition-colors underline">Continue as Guest</button>
         </div>
       </div>
@@ -6143,17 +6117,6 @@ function RolePage({ navigate, setPendingRole }: { navigate: (pg: Page) => void; 
           </button>
         </div>
         <p className="text-center text-xs text-slate-400 mt-4">You can change your role anytime by signing out and choosing a different role</p>
-        <div className="pt-4 border-t border-slate-200 mt-4 flex items-center justify-between">
-          <span className="text-xs text-slate-400">Authorized administrative access:</span>
-          <button
-            type="button"
-            onClick={() => navigate("admin-login")}
-            className="text-xs font-bold text-[#006D6A] hover:text-[#004F4D] hover:underline flex items-center gap-1.5"
-          >
-            <Shield size={14} className="text-[#008F8C]" />
-            <span>Super Admin Login →</span>
-          </button>
-        </div>
       </div>
     </div>
   );
