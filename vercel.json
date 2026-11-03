@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm --prefix SAI-Figma-Test install && npm --prefix SAI-Figma-Test run build",
+  "outputDirectory": "SAI-Figma-Test/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

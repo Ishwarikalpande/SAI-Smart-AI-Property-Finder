@@ -1,0 +1,11 @@
+# Python artifacts & virtualenvs
+__pycache__/
+*.pyc
+venv/
+.pytest_cache/
+*.db
+*.sqlite
+
+# Screenshots
+screenshots/
+
