@@ -1,5 +1,6 @@
 import io
 import os
+import re
 import base64
 import hashlib
 import secrets
@@ -11,7 +12,7 @@ from typing import Optional, Dict, Any
 
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 import pyotp
 import qrcode
 
@@ -58,7 +59,20 @@ class ForgotPasswordRequest(BaseModel):
 
 class ResetPasswordRequest(BaseModel):
     token: str = Field(..., min_length=10)
-    new_password: str = Field(..., min_length=8)
+    new_password: str = Field(..., min_length=6)
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_password_strength(cls, v: str) -> str:
+        if len(v) < 6:
+            raise ValueError("Password must be at least 6 characters long")
+        if not re.search(r"[A-Z]", v):
+            raise ValueError("Password must contain at least one uppercase letter (A-Z)")
+        if not re.search(r"[0-9]", v):
+            raise ValueError("Password must contain at least one digit (0-9)")
+        if not re.search(r"[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?~`]", v):
+            raise ValueError("Password must contain at least one special character (!@#$%^&*...)")
+        return v
 
 class LogoutRequest(BaseModel):
     refresh_token: Optional[str] = None

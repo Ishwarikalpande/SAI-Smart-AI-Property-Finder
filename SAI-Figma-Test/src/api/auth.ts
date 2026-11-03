@@ -49,6 +49,11 @@ export async function login(email: string, password: string, role?: string): Pro
   if (data.refresh_token) {
     setStoredRefreshToken(data.refresh_token);
   }
+  try {
+    if (data.name) localStorage.setItem("sai_user_name", data.name);
+    if (data.email) localStorage.setItem("sai_user_email", data.email);
+    if (data.role) localStorage.setItem("sai_user_role", data.role);
+  } catch {}
   return data;
 }
 
@@ -60,10 +65,17 @@ export async function register(
   phone?: string,
   otp?: string
 ): Promise<UserResponse> {
-  return apiRequest<UserResponse>("/auth/register", {
+  const data = await apiRequest<UserResponse>("/auth/register", {
     method: "POST",
     body: JSON.stringify({ name, email, password, role, phone, otp }),
   });
+  try {
+    if (data.name) localStorage.setItem("sai_user_name", data.name);
+    if (data.email) localStorage.setItem("sai_user_email", data.email);
+    if (data.phone) localStorage.setItem("sai_user_phone", data.phone);
+    if (data.role) localStorage.setItem("sai_user_role", data.role);
+  } catch {}
+  return data;
 }
 
 export async function getMe(): Promise<UserResponse> {
@@ -82,6 +94,12 @@ export async function logout() {
   } catch {}
   setStoredToken(null);
   setStoredRefreshToken(null);
+  try {
+    localStorage.removeItem("sai_user_name");
+    localStorage.removeItem("sai_user_email");
+    localStorage.removeItem("sai_user_phone");
+    localStorage.removeItem("sai_user_role");
+  } catch {}
 }
 
 export async function refreshAccessToken(): Promise<TokenResponse | null> {
@@ -155,6 +173,11 @@ export async function googleLogin(
     if (data.refresh_token) {
       setStoredRefreshToken(data.refresh_token);
     }
+    try {
+      if (data.name) localStorage.setItem("sai_user_name", data.name);
+      if (data.email) localStorage.setItem("sai_user_email", data.email);
+      if (data.role) localStorage.setItem("sai_user_role", data.role);
+    } catch {}
   }
   return data;
 }
@@ -178,6 +201,11 @@ export async function appleLogin(
     if (data.refresh_token) {
       setStoredRefreshToken(data.refresh_token);
     }
+    try {
+      if (data.name) localStorage.setItem("sai_user_name", data.name);
+      if (data.email) localStorage.setItem("sai_user_email", data.email);
+      if (data.role) localStorage.setItem("sai_user_role", data.role);
+    } catch {}
   }
   return data;
 }
@@ -249,6 +277,11 @@ export async function adminLogin(email: string, password: string): Promise<Admin
   });
   if (data.access_token) {
     setStoredToken(data.access_token);
+    try {
+      localStorage.setItem("sai_user_name", data.name || "Super Admin");
+      localStorage.setItem("sai_user_email", data.email || email);
+      localStorage.setItem("sai_user_role", "super_admin");
+    } catch {}
   }
   return data;
 }
@@ -266,6 +299,11 @@ export async function admin2FAVerify(email: string, code: string, tempToken?: st
     body: JSON.stringify({ email, code, temp_token: tempToken }),
   });
   setStoredToken(data.access_token);
+  try {
+    localStorage.setItem("sai_user_name", data.name || "Super Admin");
+    localStorage.setItem("sai_user_email", data.email || email);
+    localStorage.setItem("sai_user_role", "super_admin");
+  } catch {}
   return data;
 }
 
@@ -329,6 +367,14 @@ export async function verifyEmailOTP(
   if (data.refresh_token) {
     setStoredRefreshToken(data.refresh_token);
   }
+  try {
+    if (data.name) localStorage.setItem("sai_user_name", data.name);
+    else if (name) localStorage.setItem("sai_user_name", name);
+    if (data.email) localStorage.setItem("sai_user_email", data.email);
+    else if (email) localStorage.setItem("sai_user_email", email);
+    if (data.role) localStorage.setItem("sai_user_role", data.role);
+    else if (role) localStorage.setItem("sai_user_role", role);
+  } catch {}
   return data;
 }
 

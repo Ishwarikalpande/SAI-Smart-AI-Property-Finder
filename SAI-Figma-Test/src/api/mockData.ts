@@ -475,7 +475,7 @@ export function handleMockRequest(endpoint: string, options: RequestInit = {}): 
   }
 
   if (endpoint.includes("/auth/register") && method === "POST") {
-    return {
+    const newUser = {
       id: 100 + Math.floor(Math.random() * 1000),
       name: body.name || "New User",
       email: body.email,
@@ -484,11 +484,24 @@ export function handleMockRequest(endpoint: string, options: RequestInit = {}): 
       is_active: true,
       created_at: new Date().toISOString(),
     };
+    if (body.email) {
+      DEMO_USERS[body.email.toLowerCase()] = newUser;
+    }
+    return newUser;
   }
 
   if (endpoint.includes("/auth/me")) {
-    const token = (typeof options.headers === "object" && options.headers !== null) ? "" : "";
-    return { id: 1, name: "Priya Sharma", email: "buyer@sai.in", role: "buyer", is_active: true, created_at: "2026-01-01T00:00:00Z" };
+    const storedName = typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_name") : null;
+    const storedEmail = typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_email") : null;
+    const storedRole = typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_role") : null;
+    return {
+      id: 1,
+      name: storedName || "User",
+      email: storedEmail || "buyer@sai.in",
+      role: storedRole || "buyer",
+      is_active: true,
+      created_at: "2026-01-01T00:00:00Z"
+    };
   }
 
   if (endpoint.includes("/auth/logout")) {
@@ -565,9 +578,11 @@ export function handleMockRequest(endpoint: string, options: RequestInit = {}): 
   if (endpoint.includes("/auth/admin/login")) {
     if (body.email === "admin@sai.in") {
       return {
-        status: "2fa_required",
+        status: "2FA_REQUIRED",
+        requires_2fa: true,
         temp_token: `mock_admin_temp_${Date.now()}`,
         email: "admin@sai.in",
+        name: "Super Admin",
       };
     }
     return {
@@ -576,6 +591,7 @@ export function handleMockRequest(endpoint: string, options: RequestInit = {}): 
       role: "super_admin",
       user_id: 5,
       name: "Super Admin",
+      email: body.email || "admin@sai.in",
     };
   }
 
@@ -2205,6 +2221,56 @@ export function handleMockRequest(endpoint: string, options: RequestInit = {}): 
   }
 
   // ── BUILDER & AGENT COLLECTIONS ───────────────────────────────────
+  if (endpoint.includes("/agent/profile")) {
+    const storedName = typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_name") : null;
+    const storedEmail = typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_email") : null;
+    const storedPhone = typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_phone") : null;
+    return {
+      id: 101,
+      name: storedName || "Priya Patel",
+      email: storedEmail || "agent@sai.in",
+      phone: storedPhone || "+91 98234 56789",
+      role: "agent",
+      agency_name: storedName ? `${storedName} Realty` : "Prime Estates Pune",
+      license_number: "MAHA-AGT-2024-8891",
+      experience_years: 6,
+      rera_id: "A52100028911",
+      rating: 4.9,
+      review_count: 42,
+      city: "Pune",
+      areas_served: ["Baner", "Koregaon Park", "Kalyani Nagar", "Wakad", "Viman Nagar"],
+      languages: ["English", "Hindi", "Marathi"],
+      bio: "Top-rated property consultant in Pune. Specializing in verified luxury residential and commercial investments.",
+      profile_image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400",
+      verification_status: "VERIFIED",
+    };
+  }
+
+  if (endpoint.includes("/builder/profile")) {
+    const storedName = typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_name") : null;
+    const storedEmail = typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_email") : null;
+    const storedPhone = typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_phone") : null;
+    return {
+      id: 201,
+      company_name: storedName ? `${storedName} Developers` : "Prestige Landmarks",
+      company_type: "Real Estate Developer",
+      registration_number: "CIN-U45200MH2012PTC229911",
+      rera_id: "MAHARERA-B-991204",
+      established_year: 2012,
+      website: "https://sai.in",
+      support_email: storedEmail || "builder@sai.in",
+      phone: storedPhone || "+91 98201 12345",
+      city: "Pune",
+      operating_cities: ["Pune", "Mumbai", "Bengaluru"],
+      bio: "Creating sustainable, high-quality residential communities and Grade-A commercial spaces.",
+      logo: "https://images.unsplash.com/photo-1541888946425-d0fbb186f5f8?w=200",
+      verification_status: "VERIFIED",
+      total_projects: 14,
+      ongoing_projects: 5,
+      completed_projects: 9,
+    };
+  }
+
   if (endpoint.includes("/promotions")) {
     if (method === "POST") return { success: true, message: "Promotion created", promotion_id: Date.now() };
     return [];

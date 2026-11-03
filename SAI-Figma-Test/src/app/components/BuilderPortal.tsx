@@ -467,11 +467,12 @@ export function BuilderPortal({ navigate, activeSection, setActiveSection, onOpe
     { id: "builder-settings", label: "Settings", icon: Settings },
   ];
 
+  const storedBuilderName = typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_name") : null;
+  const builderDisplayName = profile?.company_name || (storedBuilderName ? `${storedBuilderName} Developers` : null) || "Prestige Landmarks";
   const builderInitials = useMemo(() => {
-    const name = profile?.company_name || "PL";
-    const parts = name.trim().split(" ");
-    return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : parts[0].slice(0, 2).toUpperCase();
-  }, [profile]);
+    const parts = builderDisplayName.trim().split(/\s+/);
+    return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : parts[0].slice(0, 2).toUpperCase() || "PL";
+  }, [builderDisplayName]);
 
   return (
     <div className="min-h-screen bg-slate-50 py-8">
@@ -503,7 +504,7 @@ export function BuilderPortal({ navigate, activeSection, setActiveSection, onOpe
 
             <div>
               <p className="text-[#D9E5E3] text-xs font-bold uppercase tracking-wider mb-0.5">Builder Portal</p>
-              <h1 className="text-2xl font-black text-white">{profile?.company_name || "Prestige Landmarks"}</h1>
+              <h1 className="text-2xl font-black text-white">{builderDisplayName}</h1>
               <p className="text-[#D9E5E3] text-sm flex items-center gap-1.5 mt-0.5">
                 <span>{profile?.company_type || "Real Estate Developer"} · {profile?.city || "Pune"}</span>
                 <span className="ml-1 bg-white/20 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">✓ Verified Developer</span>

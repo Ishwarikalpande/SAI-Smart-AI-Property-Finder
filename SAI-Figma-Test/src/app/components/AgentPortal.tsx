@@ -595,11 +595,12 @@ export function AgentPortal({ navigate, activeSection, setActiveSection }: Agent
     { id: "agent-settings", label: "Settings", icon: Settings },
   ];
 
+  const storedAgentName = typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_name") : null;
+  const agentDisplayName = profile?.name || storedAgentName || "Priya Patel";
   const agentInitials = useMemo(() => {
-    if (!profile || !profile.name) return "PP";
-    const parts = profile.name.trim().split(" ");
-    return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : parts[0].slice(0, 2).toUpperCase();
-  }, [profile]);
+    const parts = agentDisplayName.trim().split(/\s+/);
+    return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : parts[0].slice(0, 2).toUpperCase() || "AG";
+  }, [agentDisplayName]);
 
   return (
     <div className="min-h-screen bg-slate-50 py-8">
@@ -635,7 +636,7 @@ export function AgentPortal({ navigate, activeSection, setActiveSection }: Agent
 
             <div>
               <p className="text-[#D9E5E3] text-xs font-bold uppercase tracking-wider mb-0.5">Agent Portal</p>
-              <h1 className="text-2xl font-black text-white">{profile?.name || "Priya Patel"}</h1>
+              <h1 className="text-2xl font-black text-white">{agentDisplayName}</h1>
               <p className="text-[#D9E5E3] text-sm flex items-center gap-1.5 mt-0.5">
                 <Star size={13} className="text-amber-300 fill-amber-300" />
                 <span>Premium Agent · {profile?.rating || 4.9} Rating · {profile?.city || "Pune"}</span>

@@ -102,7 +102,7 @@ import {
   Globe, MessageCircle, Send, ArrowRight, Phone, Mail, Lock, LogOut,
   Settings, HelpCircle, FileText, BarChart2, Calendar, Clock, Bookmark,
   SlidersHorizontal, Grid, List, Map as MapIcon, AlertTriangle, Filter, Share2,
-  Volume2, Eye, RefreshCcw, Menu, Zap, Target, Award, Users, Edit2,
+  Volume2, Eye, EyeOff, RefreshCcw, Menu, Zap, Target, Award, Users, Edit2,
   Train, Hospital, GraduationCap, ShoppingBag, Trees, Dumbbell, Coffee,
   Car, Navigation, Activity, PieChart, Info, Camera,
   LayoutDashboard, Building2, Grid3X3, Upload, MicOff,
@@ -726,12 +726,13 @@ function FloatingSAI({ navigate, selectProperty }: { navigate: (pg: Page) => voi
 }
 
 // ── TOP NAV ───────────────────────────────────────────────────────────
-function TopNav({ page, navigate, goBack, city, setCity, locality, setLocality, lang, setLang, isGuest, isLoggedIn, userRole, agentSection, builderSection, sellerSection, onAgentSection, onBuilderSection, onSellerSection, onOpenMap }: {
+function TopNav({ page, navigate, goBack, city, setCity, locality, setLocality, lang, setLang, isGuest, isLoggedIn, userRole, userName, userEmail, agentSection, builderSection, sellerSection, onAgentSection, onBuilderSection, onSellerSection, onOpenMap }: {
   page: Page; navigate: (pg: Page) => void; goBack?: () => void;
   city: string; setCity: (c: string) => void;
   locality?: string; setLocality?: (l: string) => void;
   lang: string; setLang: (l: string) => void;
   isGuest: boolean; isLoggedIn: boolean; userRole: UserRole;
+  userName?: string; userEmail?: string;
   agentSection?: string; builderSection?: string; sellerSection?: string;
   onAgentSection?: (s: string) => void; onBuilderSection?: (s: string) => void; onSellerSection?: (s: string) => void;
   onOpenMap?: () => void;
@@ -970,8 +971,15 @@ function TopNav({ page, navigate, goBack, city, setCity, locality, setLocality, 
     : buyerDropItems
     : [];
 
-  const roleLabel = userRole === "agent" ? "Agent" : userRole === "builder" ? "Builder" : userRole === "seller" ? "Seller" : "Buyer";
-  const roleInitials = userRole === "agent" ? "PP" : userRole === "builder" ? "PG" : userRole === "seller" ? "RS" : "RS";
+  const roleLabel = userRole === "agent" ? "Agent" : userRole === "builder" ? "Builder" : userRole === "seller" ? "Seller" : userRole === "admin" || userRole === "super_admin" ? "Super Admin" : "Buyer";
+  const defaultInitials = userRole === "agent" ? "PP" : userRole === "builder" ? "PG" : userRole === "seller" ? "RS" : userRole === "admin" || userRole === "super_admin" ? "SA" : "BY";
+
+  const effectiveName = userName || (typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_name") : null) || (userRole === "super_admin" || userRole === "admin" ? "Super Admin" : "");
+  const effectiveEmail = userEmail || (typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_email") : null) || "";
+
+  const roleInitials = effectiveName
+    ? effectiveName.trim().split(/\s+/).slice(0, 2).map(p => p[0]?.toUpperCase() || "").join("") || defaultInitials
+    : defaultInitials;
 
   const currentLang = LANGUAGES.find(l => l.code === lang);
 
@@ -1189,16 +1197,21 @@ function TopNav({ page, navigate, goBack, city, setCity, locality, setLocality, 
             {isLoggedIn ? (
               <div className="relative">
                 <button onClick={() => { setUserDrop(!userDrop); setCityDrop(false); setLangDrop(false); }} className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[#D9E5E3] hover:bg-[#E6F4F2] transition-colors">
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#008F8C] to-[#004F4D] flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#008F8C] to-[#004F4D] flex items-center justify-center shadow-sm">
                     <span className="text-white text-xs font-black">{roleInitials}</span>
                   </div>
-                  <span className="text-xs font-semibold text-slate-500 hidden xl:block">{roleLabel}</span>
+                  <div className="hidden xl:flex flex-col text-left leading-tight">
+                    <span className="text-xs font-bold text-slate-800 max-w-[120px] truncate">{effectiveName || roleLabel}</span>
+                    <span className="text-[10px] font-semibold text-slate-400">{roleLabel}</span>
+                  </div>
                   <ChevronDown size={13} className="text-slate-400" />
                 </button>
                 {userDrop && (
                   <div className="absolute right-0 top-12 bg-white rounded-2xl shadow-xl border border-[#D9E5E3] py-2 w-56 z-50">
-                    <div className="px-4 py-2 border-b border-[#D9E5E3] mb-1">
-                      <p className="text-xs font-black text-[#008F8C]">{roleLabel} Portal</p>
+                    <div className="px-4 py-2.5 border-b border-[#D9E5E3] mb-1 bg-slate-50/70">
+                      <p className="text-xs font-black text-slate-800 truncate">{effectiveName || `${roleLabel} User`}</p>
+                      {effectiveEmail && <p className="text-[11px] text-slate-500 truncate">{effectiveEmail}</p>}
+                      <span className="inline-block mt-1 text-[10px] font-bold text-[#008F8C] bg-[#E6F4F2] px-2 py-0.5 rounded-full">{roleLabel} Portal</span>
                     </div>
                     {userDropItems.map(({ icon: Icon, label, p, section }) => (
                       <button key={label} onClick={() => {
@@ -1231,6 +1244,14 @@ function TopNav({ page, navigate, goBack, city, setCity, locality, setLocality, 
                     <span>Exit Guest</span>
                   </button>
                 )}
+                <button
+                  onClick={() => navigate("admin-login")}
+                  title="Super Admin Portal Login"
+                  className="p-2 rounded-xl border border-[#D9E5E3] text-slate-500 hover:text-[#006D6A] hover:border-[#008F8C] hover:bg-[#E6F4F2] transition-colors flex items-center gap-1 text-xs font-bold"
+                >
+                  <Shield size={14} className="text-[#008F8C]" />
+                  <span className="hidden xl:inline">Super Admin</span>
+                </button>
                 <button onClick={() => navigate("login")} className="px-4 py-2 rounded-xl border-2 border-[#D9E5E3] text-[#008F8C] font-semibold text-sm hover:bg-[#E6F4F2] transition-colors">{tr.login}</button>
                 <button onClick={() => navigate("signup")} className="px-4 py-2 rounded-xl bg-[#006D6A] text-white font-semibold text-sm hover:bg-[#004F4D] shadow-[0_4px_12px_rgba(0,109,106,0.4)] hover:shadow-[0_6px_20px_rgba(0,109,106,0.5)] transition-all">{tr.signUp}</button>
               </div>
@@ -1272,6 +1293,15 @@ function TopNav({ page, navigate, goBack, city, setCity, locality, setLocality, 
               </>
             )}
           </div>
+          {!isLoggedIn && !isGuest && (
+            <button
+              onClick={() => { navigate("admin-login"); setMobileOpen(false); }}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:text-[#006D6A] hover:bg-slate-50 transition-colors mt-2"
+            >
+              <Shield size={14} className="text-[#008F8C]" />
+              <span>Super Admin Console Login</span>
+            </button>
+          )}
           <div className="flex gap-3 pt-1">
             <div className="flex-1">
               <p className="text-xs text-slate-400 mb-1.5 font-medium">City</p>
@@ -1318,7 +1348,7 @@ function Footer({ navigate }: { navigate: (pg: Page) => void }) {
           {[
             { title: "Explore", links: [{ l: "Buy Property", p: "search" as Page }, { l: "Rent Property", p: "search" as Page }, { l: "Commercial", p: "search" as Page }, { l: "New Projects", p: "search" as Page }, { l: "Builders", p: "builder" as Page }] },
             { title: "AI Tools", links: [{ l: "SAI Assistant", p: "chat" as Page }, { l: "Property Compare", p: "compare" as Page }, { l: "Fraud Detection", p: "fraud" as Page }, { l: "Price Prediction", p: "search" as Page }, { l: "Senior Mode", p: "senior" as Page }] },
-            { title: "Company", links: [{ l: "About SAI", p: "home" as Page }, { l: "Careers", p: "home" as Page }, { l: "Privacy Policy", p: "home" as Page }, { l: "Terms", p: "home" as Page }, { l: "Contact", p: "home" as Page }] },
+            { title: "Company", links: [{ l: "About SAI", p: "home" as Page }, { l: "Careers", p: "home" as Page }, { l: "Super Admin Portal", p: "admin-login" as Page }, { l: "Privacy Policy", p: "home" as Page }, { l: "Terms", p: "home" as Page }, { l: "Contact", p: "home" as Page }] },
           ].map(col => (
             <div key={col.title}>
               <h4 className="font-black text-white text-sm mb-5">{col.title}</h4>
@@ -5113,16 +5143,19 @@ const LOGIN_ROLES = [
   { id: "seller" as UserRole, label: "Seller", email: "owner@sai.in", icon: DollarSign, badge: "Property Owner", desc: "Manage listings & buyer leads" },
   { id: "agent" as UserRole, label: "Agent", email: "agent@sai.in", icon: Users, badge: "Real Estate Broker", desc: "Manage client leads & scheduled visits" },
   { id: "builder" as UserRole, label: "Builder", email: "builder@sai.in", icon: Building, badge: "Developer", desc: "Projects, towers, units & enquiries" },
+  { id: "admin" as UserRole, label: "Super Admin", email: "admin@sai.in", icon: Shield, badge: "Administrator", desc: "Platform telemetry, verification, users & logs" },
 ];
 
 function LoginPage({
   navigate,
   pendingRole,
   setPendingRole,
+  onUserLogin,
 }: {
   navigate: (pg: Page) => void;
   pendingRole: UserRole;
   setPendingRole?: (r: UserRole) => void;
+  onUserLogin?: (name: string, email: string) => void;
 }) {
   const [selectedRole, setSelectedRole] = useState<UserRole>(pendingRole || "buyer");
 
@@ -5130,6 +5163,7 @@ function LoginPage({
     if (role === "seller") return "owner@sai.in";
     if (role === "agent") return "agent@sai.in";
     if (role === "builder") return "builder@sai.in";
+    if (role === "admin" || role === "super_admin") return "admin@sai.in";
     return "buyer@sai.in";
   };
 
@@ -5160,7 +5194,7 @@ function LoginPage({
 
   const handleRoleSelect = (role: UserRole) => {
     setSelectedRole(role);
-    const demoEmails = ["buyer@sai.in", "owner@sai.in", "agent@sai.in", "builder@sai.in", ""];
+    const demoEmails = ["buyer@sai.in", "owner@sai.in", "agent@sai.in", "builder@sai.in", "admin@sai.in", ""];
     if (demoEmails.includes(loginEmail.trim())) {
       setLoginEmail(getRoleEmail(role));
     }
@@ -5177,6 +5211,8 @@ function LoginPage({
     seller: "bg-amber-50 text-amber-700",
     agent: "bg-purple-50 text-purple-700",
     builder: "bg-slate-100 text-slate-700",
+    admin: "bg-emerald-50 text-emerald-800",
+    super_admin: "bg-emerald-50 text-emerald-800",
   };
 
   const handleLogin = async () => {
@@ -5188,9 +5224,33 @@ function LoginPage({
     setLoading(true);
     setAuthError(null);
     try {
+      if (selectedRole === "admin" || selectedRole === "super_admin" || loginEmail.trim().toLowerCase() === "admin@sai.in") {
+        const res = await apiAdminLogin(loginEmail, loginPassword || "Password123!");
+        if (res.status === "2FA_REQUIRED") {
+          sessionStorage.setItem("admin_2fa_email", res.email || loginEmail);
+          if (res.temp_token) sessionStorage.setItem("admin_2fa_token", res.temp_token);
+          navigate("admin-2fa");
+          return;
+        }
+        try {
+          localStorage.setItem("sai_user_name", "Super Admin");
+          localStorage.setItem("sai_user_email", loginEmail);
+          localStorage.setItem("sai_user_role", "super_admin");
+        } catch {}
+        onUserLogin?.("Super Admin", loginEmail);
+        navigate("admin");
+        return;
+      }
       const tokenData = await apiLogin(loginEmail, loginPassword || "Password123!", selectedRole);
       const role = tokenData.role || selectedRole || "buyer";
-      const destRole: Page = (role === "super_admin" ? "admin" : role) as Page;
+      const uName = tokenData.name || (loginEmail.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()));
+      try {
+        localStorage.setItem("sai_user_name", uName);
+        localStorage.setItem("sai_user_email", loginEmail);
+        localStorage.setItem("sai_user_role", role);
+      } catch {}
+      onUserLogin?.(uName, loginEmail);
+      const destRole: Page = (role === "super_admin" || role === "admin" ? "admin" : role) as Page;
       navigate(destRole);
     } catch (err: any) {
       setAuthError(err?.message || "Invalid credentials. Please verify your email and password.");
@@ -5317,7 +5377,7 @@ function LoginPage({
             <p className="text-slate-500 text-sm mt-1">Sign in to your SAI account</p>
           </div>
 
-          {/* 4 Role Selector Tabs */}
+          {/* 5 Role Selector Tabs */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
@@ -5327,7 +5387,7 @@ function LoginPage({
                 {currentRoleObj.badge}
               </span>
             </div>
-            <div className="grid grid-cols-4 gap-1.5 p-1 bg-slate-100 rounded-2xl">
+            <div className="grid grid-cols-5 gap-1 p-1 bg-slate-100 rounded-2xl">
               {LOGIN_ROLES.map(r => {
                 const isSel = selectedRole === r.id;
                 const Icon = r.icon;
@@ -5461,6 +5521,17 @@ function LoginPage({
             </button>
           </div>
           <p className="text-center text-slate-500 text-sm">New to SAI? <button onClick={() => { if (setPendingRole) setPendingRole(selectedRole); navigate("signup"); }} className="text-[#006D6A] font-bold hover:underline">Create Account</button></p>
+          <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between">
+            <span className="text-xs text-slate-500 font-medium">Platform Administrator?</span>
+            <button
+              type="button"
+              onClick={() => navigate("admin-login")}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#006D6A] hover:text-[#004F4D] bg-[#E6F4F2] hover:bg-[#D9E5E3] px-3 py-1.5 rounded-xl border border-[#006D6A]/20 transition-all"
+            >
+              <Shield size={13} />
+              <span>Super Admin Login</span>
+            </button>
+          </div>
           <button onClick={() => { navigate("home"); }} className="mt-3 w-full text-slate-400 text-sm text-center hover:text-[#006D6A] transition-colors underline">Continue as Guest</button>
         </div>
       </div>
@@ -5468,12 +5539,21 @@ function LoginPage({
   );
 }
 
-function SignupPage({ navigate, pendingRole }: { navigate: (pg: Page) => void; pendingRole: UserRole }) {
+function SignupPage({
+  navigate,
+  pendingRole,
+  onUserRegistered
+}: {
+  navigate: (pg: Page) => void;
+  pendingRole: UserRole;
+  onUserRegistered?: (name: string, email: string) => void;
+}) {
   const [step, setStep] = useState<"details" | "otp">("details");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", "", "", ""]);
   const [cooldown, setCooldown] = useState(0);
   const [expiresInSeconds, setExpiresInSeconds] = useState(300);
@@ -5484,6 +5564,12 @@ function SignupPage({ navigate, pendingRole }: { navigate: (pg: Page) => void; p
   const { tr } = useI18n();
 
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const hasMinLength = password.length >= 6;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasDigit = /[0-9]/.test(password);
+  const hasSpecial = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(password);
+  const isPasswordValid = hasMinLength && hasUppercase && hasDigit && hasSpecial;
 
   const roleLabel = pendingRole === "seller" ? tr.seller : pendingRole === "agent" ? tr.agent : pendingRole === "builder" ? tr.builder : tr.buyer;
   const roleColor: Record<string, string> = { buyer: "bg-[#E6F4F2] text-[#006D6A]", seller: "bg-amber-50 text-amber-700", agent: "bg-purple-50 text-purple-700", builder: "bg-slate-100 text-slate-700" };
@@ -5523,8 +5609,24 @@ function SignupPage({ navigate, pendingRole }: { navigate: (pg: Page) => void; p
       setError("Please enter a valid email address.");
       return;
     }
-    if (!password || password.length < 6) {
+    if (!password) {
+      setError("Please enter a password.");
+      return;
+    }
+    if (!hasMinLength) {
       setError("Password must be at least 6 characters long.");
+      return;
+    }
+    if (!hasUppercase) {
+      setError("Password must contain at least one uppercase letter (A-Z).");
+      return;
+    }
+    if (!hasDigit) {
+      setError("Password must contain at least one digit (0-9).");
+      return;
+    }
+    if (!hasSpecial) {
+      setError("Password must contain at least one special character (!@#$%^&*...).");
       return;
     }
     setLoading(true);
@@ -5581,8 +5683,18 @@ function SignupPage({ navigate, pendingRole }: { navigate: (pg: Page) => void; p
     try {
       const role = pendingRole || "buyer";
       const cleanEmail = email.trim().toLowerCase();
-      await apiRegister(fullName || "User", cleanEmail, password, role, phone, code);
+      const cleanName = fullName.trim() || "User";
+      await apiRegister(cleanName, cleanEmail, password, role, phone, code);
       await apiLogin(cleanEmail, password, role);
+      try {
+        localStorage.setItem("sai_user_name", cleanName);
+        localStorage.setItem("sai_user_email", cleanEmail);
+        localStorage.setItem("sai_user_phone", phone || "");
+        localStorage.setItem("sai_user_role", role);
+      } catch {}
+      if (onUserRegistered) {
+        onUserRegistered(cleanName, cleanEmail);
+      }
       const destRole: Page = (role as Page) || "buyer";
       navigate(destRole);
     } catch (err: any) {
@@ -5734,12 +5846,47 @@ function SignupPage({ navigate, pendingRole }: { navigate: (pg: Page) => void; p
                   <div className="relative">
                     <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={e => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full bg-slate-50 rounded-2xl pl-10 pr-4 py-3.5 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#D9E5E3] border border-[#D9E5E3]"
+                      className="w-full bg-slate-50 rounded-2xl pl-10 pr-11 py-3.5 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#D9E5E3] border border-[#D9E5E3]"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+
+                  {/* Real-time Password Strength Requirements */}
+                  <div className="grid grid-cols-2 gap-1.5 mt-2.5 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 text-[11px]">
+                    <div className={`flex items-center gap-1.5 ${hasMinLength ? "text-emerald-700 font-bold" : "text-slate-400"}`}>
+                      <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${hasMinLength ? "bg-emerald-500 text-white font-black" : "bg-slate-200 text-slate-500"}`}>
+                        {hasMinLength ? "✓" : "•"}
+                      </span>
+                      <span>Min. 6 chars</span>
+                    </div>
+                    <div className={`flex items-center gap-1.5 ${hasUppercase ? "text-emerald-700 font-bold" : "text-slate-400"}`}>
+                      <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${hasUppercase ? "bg-emerald-500 text-white font-black" : "bg-slate-200 text-slate-500"}`}>
+                        {hasUppercase ? "✓" : "•"}
+                      </span>
+                      <span>1 Uppercase (A-Z)</span>
+                    </div>
+                    <div className={`flex items-center gap-1.5 ${hasDigit ? "text-emerald-700 font-bold" : "text-slate-400"}`}>
+                      <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${hasDigit ? "bg-emerald-500 text-white font-black" : "bg-slate-200 text-slate-500"}`}>
+                        {hasDigit ? "✓" : "•"}
+                      </span>
+                      <span>1 Number (0-9)</span>
+                    </div>
+                    <div className={`flex items-center gap-1.5 ${hasSpecial ? "text-emerald-700 font-bold" : "text-slate-400"}`}>
+                      <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${hasSpecial ? "bg-emerald-500 text-white font-black" : "bg-slate-200 text-slate-500"}`}>
+                        {hasSpecial ? "✓" : "•"}
+                      </span>
+                      <span>1 Special char (!@#$)</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -5752,7 +5899,7 @@ function SignupPage({ navigate, pendingRole }: { navigate: (pg: Page) => void; p
               <button
                 type="button"
                 onClick={handleSendRegistrationOTP}
-                disabled={loading || !email.trim() || !password}
+                disabled={loading || !email.trim() || !password || !isPasswordValid}
                 className="w-full bg-[#006D6A] text-white font-bold py-4 rounded-2xl shadow-[0_8px_24px_rgba(0,109,106,0.4)] mb-4 hover:bg-[#004F4D] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
@@ -5996,6 +6143,17 @@ function RolePage({ navigate, setPendingRole }: { navigate: (pg: Page) => void; 
           </button>
         </div>
         <p className="text-center text-xs text-slate-400 mt-4">You can change your role anytime by signing out and choosing a different role</p>
+        <div className="pt-4 border-t border-slate-200 mt-4 flex items-center justify-between">
+          <span className="text-xs text-slate-400">Authorized administrative access:</span>
+          <button
+            type="button"
+            onClick={() => navigate("admin-login")}
+            className="text-xs font-bold text-[#006D6A] hover:text-[#004F4D] hover:underline flex items-center gap-1.5"
+          >
+            <Shield size={14} className="text-[#008F8C]" />
+            <span>Super Admin Login →</span>
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -6017,9 +6175,15 @@ function BuyerDashPage({ navigate, city, selectProperty, openBuilding3D }: { nav
   const [selectedDocPropertyId, setSelectedDocPropertyId] = useState<number>(1);
 
   // Buyer Profile State with Voice Input
-  const [buyerName, setBuyerName] = useState("Priya Sharma");
-  const [buyerEmail, setBuyerEmail] = useState("buyer@sai.in");
-  const [buyerPhone, setBuyerPhone] = useState("9876543210");
+  const [buyerName, setBuyerName] = useState(
+    () => (typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_name") : null) || "Priya Sharma"
+  );
+  const [buyerEmail, setBuyerEmail] = useState(
+    () => (typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_email") : null) || "buyer@sai.in"
+  );
+  const [buyerPhone, setBuyerPhone] = useState(
+    () => (typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_phone") : null) || "9876543210"
+  );
   const [buyerAddress, setBuyerAddress] = useState("Flat 402, Green Acre Heights, Baner");
   const [buyerCity, setBuyerCity] = useState(city || "Pune");
   const [buyerLocality, setBuyerLocality] = useState("Baner");
@@ -6249,7 +6413,7 @@ function BuyerDashPage({ navigate, city, selectProperty, openBuilding3D }: { nav
             </button>
             <div>
               <p className="text-[#D9E5E3] text-xs font-bold uppercase tracking-wider mb-1">Buyer Dashboard</p>
-              <h1 className="text-2xl sm:text-3xl font-black text-white">My Property Journey</h1>
+              <h1 className="text-2xl sm:text-3xl font-black text-white">Welcome, {buyerName}!</h1>
               <p className="text-[#E6F4F2] mt-1 text-sm flex items-center gap-1.5"><MapPin size={13} />📍 {city}</p>
             </div>
           </div>
@@ -7245,16 +7409,30 @@ function SettingsPage({ navigate }: { navigate: (pg: Page) => void }) {
 function ProfilePage({ navigate }: { navigate: (pg: Page) => void }) {
   const { lang, tr } = useI18n();
   const [activeTab, setActiveTab] = useState<"info" | "activity" | "security">("info");
-  const [userName, setUserName] = useState("Priya Sharma");
-  const [userEmail, setUserEmail] = useState("buyer@sai.in");
-  const [userPhone, setUserPhone] = useState("9876543210");
-  const [userCity, setUserCity] = useState("Pune");
+  const [userName, setUserName] = useState(
+    () => (typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_name") : null) || "Priya Sharma"
+  );
+  const [userEmail, setUserEmail] = useState(
+    () => (typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_email") : null) || "buyer@sai.in"
+  );
+  const [userPhone, setUserPhone] = useState(
+    () => (typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_phone") : null) || "9876543210"
+  );
+  const [userCity, setUserCity] = useState(
+    () => (typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_city") : null) || "Pune"
+  );
   const [budget, setBudget] = useState("₹60L – ₹90L");
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [twoFactor, setTwoFactor] = useState(true);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      localStorage.setItem("sai_user_name", userName);
+      localStorage.setItem("sai_user_email", userEmail);
+      localStorage.setItem("sai_user_phone", userPhone);
+      localStorage.setItem("sai_user_city", userCity);
+    } catch {}
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
   };
@@ -8437,6 +8615,13 @@ function GenericPropertyCard({ p, navigate, onClickFn }: { p: { id: number; name
 
 function SellerDashPage({ navigate, activeSection, setActiveSection }: { navigate: (pg: Page) => void; activeSection: string; setActiveSection: (s: string) => void }) {
   const { tr } = useI18n();
+  const sellerDisplayName = (typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_name") : null) || "Rahul Sharma";
+  const sellerInitials = sellerDisplayName
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map(p => p[0]?.toUpperCase() || "")
+    .join("") || "RS";
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
@@ -8641,12 +8826,12 @@ function SellerDashPage({ navigate, activeSection, setActiveSection }: { navigat
               <LogOut size={14} />{tr.signOut || "Sign Out"}
             </button>
             <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center shadow">
-              <span className="text-white font-black text-xl">RS</span>
+              <span className="text-white font-black text-xl">{sellerInitials}</span>
             </div>
             <div>
               <p className="text-[#D9E5E3] text-xs font-bold uppercase tracking-wider mb-0.5">Seller Portal</p>
-              <h1 className="text-2xl font-black text-white">Rahul Sharma</h1>
-              <p className="text-[#D9E5E3] text-sm flex items-center gap-1.5"><Shield size={12} />Verified Seller · Pune</p>
+              <h1 className="text-2xl font-black text-white">{sellerDisplayName}</h1>
+              <p className="text-[#D9E5E3] text-sm flex items-center gap-1.5"><Shield size={12} />Verified Seller · {sellerCity}</p>
             </div>
           </div>
           <button onClick={() => setActiveSection("add")} className="bg-white text-[#006D6A] font-bold px-5 py-3 rounded-xl flex items-center gap-2 hover:bg-[#E6F4F2] transition-colors shadow-lg">
@@ -9362,7 +9547,16 @@ function AdminLoginPage({ navigate }: { navigate: (pg: Page) => void }) {
               <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="admin@sai.in" className="w-full bg-slate-50 border border-[#D9E5E3] rounded-2xl px-4 py-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#008F8C]/30 focus:border-[#008F8C]" />
             </div>
             <div>
-              <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">Password</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-black text-slate-500 uppercase tracking-widest block">Password</label>
+                <button
+                  type="button"
+                  onClick={() => { setEmail("admin@sai.in"); setPass("Password123!"); }}
+                  className="text-xs font-bold text-[#006D6A] hover:underline"
+                >
+                  Quick-fill Demo Pass
+                </button>
+              </div>
               <input value={pass} onChange={e => setPass(e.target.value)} onKeyDown={e => e.key === "Enter" && handleLogin()} type="password" placeholder="••••••••••••" className="w-full bg-slate-50 border border-[#D9E5E3] rounded-2xl px-4 py-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#008F8C]/30 focus:border-[#008F8C]" />
             </div>
           </div>
@@ -9424,6 +9618,19 @@ function Admin2FAPage({ navigate }: { navigate: (pg: Page) => void }) {
               {error}
             </div>
           )}
+          <div className="bg-[#E6F4F2] border border-[#006D6A]/30 rounded-2xl p-3 flex items-center justify-between text-xs mb-6">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[#006D6A]">Dev / Demo Code:</span>
+              <code className="font-mono bg-white px-2 py-0.5 rounded-lg border border-[#006D6A]/20 font-black text-slate-800">123456</code>
+            </div>
+            <button
+              type="button"
+              onClick={() => setCode(["1", "2", "3", "4", "5", "6"])}
+              className="text-[#006D6A] font-extrabold hover:text-[#004F4D] underline cursor-pointer"
+            >
+              Auto-fill
+            </button>
+          </div>
           <div className="flex gap-3 justify-center mb-8">
             {code.map((d, i) => (
               <input
@@ -9717,6 +9924,13 @@ function AdminDashPage({ navigate }: { navigate: (pg: Page) => void }) {
             <p className="font-black text-slate-800 text-sm">{adminNav.find(n => n.id === activeSection)?.label}</p>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate("home")}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:text-[#006D6A] hover:bg-slate-50 transition-colors"
+            >
+              <Home size={13} />
+              <span>View Main Website</span>
+            </button>
             <div className="flex items-center gap-1.5 bg-green-50 border border-green-200 rounded-xl px-3 py-1.5">
               <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
               <span className="text-green-700 text-xs font-bold">All Systems Operational</span>
@@ -10377,6 +10591,20 @@ function MainApp() {
   const [isGuest, setIsGuest] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(initialNavInfo.isLoggedIn);
   const [userRole, setUserRole] = useState<UserRole>(initialNavInfo.role);
+  const [currentUserName, setCurrentUserName] = useState<string>(() => {
+    try {
+      return typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_name") || "" : "";
+    } catch {
+      return "";
+    }
+  });
+  const [currentUserEmail, setCurrentUserEmail] = useState<string>(() => {
+    try {
+      return typeof localStorage !== "undefined" ? localStorage.getItem("sai_user_email") || "" : "";
+    } catch {
+      return "";
+    }
+  });
   const [selectedPropertyId, setSelectedPropertyId] = useState<number>(1);
   const [agentSection, setAgentSection] = useState("overview");
   const [builderSection, setBuilderSection] = useState("overview");
@@ -10406,7 +10634,7 @@ function MainApp() {
 
   useEffect(() => {
     // Restore session and handle deep links
-    const token = localStorage.getItem("token") || localStorage.getItem("access_token");
+    const token = localStorage.getItem("token") || localStorage.getItem("access_token") || localStorage.getItem("sai_token");
     if (token) {
       apiGetMe()
         .then((res: any) => {
@@ -10416,10 +10644,24 @@ function MainApp() {
             const mappedRole: UserRole = r === "super_admin" || r === "admin" ? "admin" : r === "builder" ? "builder" : r === "agent" ? "agent" : r === "seller" ? "seller" : "buyer";
             setUserRole(mappedRole);
             setIsGuest(false);
+            if (res.user.name) {
+              setCurrentUserName(res.user.name);
+              localStorage.setItem("sai_user_name", res.user.name);
+            }
+            if (res.user.email) {
+              setCurrentUserEmail(res.user.email);
+              localStorage.setItem("sai_user_email", res.user.email);
+            }
           }
         })
         .catch(() => {});
     }
+    try {
+      const storedName = localStorage.getItem("sai_user_name");
+      const storedEmail = localStorage.getItem("sai_user_email");
+      if (storedName) setCurrentUserName(storedName);
+      if (storedEmail) setCurrentUserEmail(storedEmail);
+    } catch {}
 
     const path = window.location.pathname;
     if (path.startsWith("/agent")) {
@@ -10570,11 +10812,21 @@ function MainApp() {
       if (pg === "welcome" || pg === "language") {
         setIsGuest(false);
         setPendingRole(null);
+        setCurrentUserName("");
+        setCurrentUserEmail("");
         apiLogout();
       }
     }
 
     if (pg === "home" && !isLoggedIn) setIsGuest(true);
+    if (pg === "buyer" || pg === "seller" || pg === "builder" || pg === "agent" || pg === "profile") {
+      try {
+        const storedName = localStorage.getItem("sai_user_name");
+        const storedEmail = localStorage.getItem("sai_user_email");
+        if (storedName) setCurrentUserName(storedName);
+        if (storedEmail) setCurrentUserEmail(storedEmail);
+      } catch {}
+    }
     if (pg === "buyer") { setIsLoggedIn(true); setUserRole("buyer"); setIsGuest(false); }
     if (pg === "seller") { setIsLoggedIn(true); setUserRole("seller"); setSellerSection("overview"); setIsGuest(false); }
     if (pg === "builder") { setIsLoggedIn(true); setUserRole("builder"); setBuilderSection("overview"); setIsGuest(false); }
@@ -10635,6 +10887,8 @@ function MainApp() {
           isGuest={isGuest}
           isLoggedIn={isLoggedIn}
           userRole={userRole}
+          userName={currentUserName}
+          userEmail={currentUserEmail}
           agentSection={agentSection}
           builderSection={builderSection}
           sellerSection={sellerSection}
@@ -10648,8 +10902,27 @@ function MainApp() {
         {page === "language" && <LanguagePage navigate={navigate} setLang={setLang} currentLang={lang} isGuest={isGuest || isLoggedIn} />}
         {page === "welcome" && <WelcomePage navigate={navigate} />}
         {page === "home" && <HomePage navigate={navigate} city={city} setCity={setCity} lang={lang} setLang={setLang} selectProperty={selectProperty} onOpenMap={() => setIsLocationModalOpen(true)} onExploreCity={navigateToCityExplore} />}
-        {page === "login" && <LoginPage navigate={navigate} pendingRole={pendingRole} setPendingRole={setPendingRole} />}
-        {page === "signup" && <SignupPage navigate={navigate} pendingRole={pendingRole} />}
+        {page === "login" && (
+          <LoginPage
+            navigate={navigate}
+            pendingRole={pendingRole}
+            setPendingRole={setPendingRole}
+            onUserLogin={(name, email) => {
+              setCurrentUserName(name);
+              setCurrentUserEmail(email);
+            }}
+          />
+        )}
+        {page === "signup" && (
+          <SignupPage
+            navigate={navigate}
+            pendingRole={pendingRole}
+            onUserRegistered={(name, email) => {
+              setCurrentUserName(name);
+              setCurrentUserEmail(email);
+            }}
+          />
+        )}
         {page === "otp" && <OTPPage navigate={navigate} pendingRole={pendingRole} />}
         {page === "role" && <RolePage navigate={navigate} setPendingRole={setPendingRole} />}
         {page === "search" && <SearchPage navigate={navigate} city={city} lang={lang} selectProperty={selectProperty} />}

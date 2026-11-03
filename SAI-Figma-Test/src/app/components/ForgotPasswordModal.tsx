@@ -269,6 +269,18 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
       setErrorMessage("Password must be at least 8 characters long.");
       return;
     }
+    if (!/[A-Z]/.test(newPassword)) {
+      setErrorMessage("Password must contain at least one uppercase letter (A-Z).");
+      return;
+    }
+    if (!/[0-9]/.test(newPassword)) {
+      setErrorMessage("Password must contain at least one digit (0-9).");
+      return;
+    }
+    if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(newPassword)) {
+      setErrorMessage("Password must contain at least one special character (!@#$%^&*...).");
+      return;
+    }
     if (newPassword !== confirmPassword) {
       setErrorMessage("Passwords do not match. Please re-enter.");
       return;
@@ -529,6 +541,34 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
+                </div>
+
+                {/* Password Requirements Checklist */}
+                <div className="grid grid-cols-2 gap-1.5 mt-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 text-[11px]">
+                  <div className={`flex items-center gap-1.5 ${newPassword.length >= 8 ? "text-emerald-700 font-bold" : "text-slate-400"}`}>
+                    <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${newPassword.length >= 8 ? "bg-emerald-500 text-white font-black" : "bg-slate-200 text-slate-500"}`}>
+                      {newPassword.length >= 8 ? "✓" : "•"}
+                    </span>
+                    <span>Min. 8 characters</span>
+                  </div>
+                  <div className={`flex items-center gap-1.5 ${/[A-Z]/.test(newPassword) ? "text-emerald-700 font-bold" : "text-slate-400"}`}>
+                    <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${/[A-Z]/.test(newPassword) ? "bg-emerald-500 text-white font-black" : "bg-slate-200 text-slate-500"}`}>
+                      {/[A-Z]/.test(newPassword) ? "✓" : "•"}
+                    </span>
+                    <span>1 Uppercase (A-Z)</span>
+                  </div>
+                  <div className={`flex items-center gap-1.5 ${/[0-9]/.test(newPassword) ? "text-emerald-700 font-bold" : "text-slate-400"}`}>
+                    <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${/[0-9]/.test(newPassword) ? "bg-emerald-500 text-white font-black" : "bg-slate-200 text-slate-500"}`}>
+                      {/[0-9]/.test(newPassword) ? "✓" : "•"}
+                    </span>
+                    <span>1 Number (0-9)</span>
+                  </div>
+                  <div className={`flex items-center gap-1.5 ${/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(newPassword) ? "text-emerald-700 font-bold" : "text-slate-400"}`}>
+                    <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[10px] ${/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(newPassword) ? "bg-emerald-500 text-white font-black" : "bg-slate-200 text-slate-500"}`}>
+                      {/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(newPassword) ? "✓" : "•"}
+                    </span>
+                    <span>1 Special char (!@#$)</span>
+                  </div>
                 </div>
               </div>
 
